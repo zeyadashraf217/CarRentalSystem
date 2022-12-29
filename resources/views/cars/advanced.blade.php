@@ -20,11 +20,12 @@
             <div class="col-md-4 col-md-offset-4 pt-5">
                 <h4>Advanced Search</h4>
                 <hr>
-                <form action=""  method="post" >
+                <form action=""  method="post" id="form"  >
 
                     <div class="form-group">
                         <label for="office">office</label>
                         <select name="office_id" class="form-control" id="office" name="offices" required>
+                            <option value="true"></option>
                             @foreach ($offices as $office )
                             <option value="{{$office->office_id}}"> {{ $office->city }}</option>
                             @endforeach
@@ -33,8 +34,8 @@
 
                     <div class="form-group">
                         <label for="car_brand">Car_brand</label>
-                        <select name="car_brand" class="form-control pt-2" id="brand" name="brands" required>
-                            <option value="not null"></option>
+                        <select name="car_brand" class="form-control" id="brand" name="brands" required>
+                            <option value="true"></option>
                             @foreach ($brands as $brand )
                             <option value=" {{$brand->car_brand}} "  > {{ $brand->car_brand }}</option>
                             @endforeach
@@ -43,21 +44,19 @@
 
                     <div class="form-group">
                         <label for="car_model">Car_model</label>
-
                         <select name="car_model" class="form-control" id="model" required>
+                            <option value="true"> </option>
+                            @foreach ($models as $brand )
+                            <option value=" {{$brand->car_model}} "  > {{ $brand->car_model }}</option>
+                            @endforeach
                         </select>
                     </div>
-
-
-                    <div class="form-group pt-2">
-                        <button type="submit" class="btn btn-labeled btn-success">
-                            <span class="btn-label pe-3"><i class="fa-solid fa-plus"></i></span>Add Car
-                        </button>
-                    </div>
-
                 </form>
             </div>
         </div>
+    </div>
+    <div id="table">
+
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
@@ -72,17 +71,21 @@
 
             x=$( "select#office" ).val();
             console.log(x)
-            $('#brand').on('click', function(){
-                var value = $(this).val();
+            $('#form').on('change', function(){
+                office=$( "select#office" ).val();
+                brand=$( "select#brand" ).val();
+                model=$( "select#model" ).val();
                 $.ajax({
                     type: "get",
-                    url: "/brand",
-                    data: {"offices":value},
+                    url: "/change",
+                    data: {"offices":office,"brands":brand,"models":model},
                     success: function (data) {
-                        $('#brand').html(data);
+                        $('#table').html(data);
                     }
                 });
             });
+
+
             $('#brand').on('change', function(){
                 var value = $(this).val();
                 $.ajax({

@@ -130,7 +130,6 @@ class CarController extends Controller
 
     public function search(Request $request)
     {
-        $random=cars
 
         if($request->ajax()) {
             // @dd($request);
@@ -178,7 +177,7 @@ class CarController extends Controller
     {
         if($request->ajax()) {
             $output = '';
-            $cars = car::where('car_brand', 'LIKE', '%'.$request->brands.'%')->get();
+            $cars = car::where('car_brand', 'LIKE', '%'.$request->brands.'%')->select('car_model')->distinct()->get();
                             if($cars) {
                                 $output .='<option value ="not null" > </option>';
                                 foreach($cars as $car) {
@@ -188,6 +187,74 @@ class CarController extends Controller
 
                   ';
                 }
+
+                return response()->json($output);
+
+            }
+        }
+
+
+
+        return view('cars.advanced');
+
+    }
+    public function change(Request $request)
+    {
+        if($request->ajax()) {
+            $output = '';
+            $x1='%';
+            $x2='%';
+            $x3='%';
+            if ($request->offices != "true") {
+                $x1=$request->offices;
+            }
+            if ($request->brands != "true") {
+                $x2= $request->brands;
+            }
+            if ($request->models != "true") {
+                $x3=$request->models;
+            }
+
+            $cars = car::where('office_id' ,'like', $x1)
+                        ->where('car_brand','like',$x2)
+                        ->where('car_model','like' ,$x3)
+                        ->get();
+                        $output .= ' <div class="card-body table-responsive p-0" style="height: 550px;">
+                        <table class="table table-head-fixed text-nowrap">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Brand</th>
+                                    <th>Model</th>
+                                    <th>Year</th>
+                                    <th>Plate number</th>
+                                    <th>office</th>
+                                    <th>Image</th>
+                                </tr>
+                            </thead>
+                            <tbody>';
+                            if($cars) {
+                                foreach($cars as $car) {
+                    $output .=
+                     '
+                                 <tr>
+                                     <td> '.$car->car_id.' </td>
+                                     <td>  '.$car->car_brand.'  </td>
+                                     <td> '.$car->car_model.' </td>
+                                     <td> '.$car->year .'</td>
+                                     <td>'.$car->plate_id .'</td>
+                                     <td> '.$car->office->city .'</td>
+                                     <td><img src="'.$car->getFirstMediaUrl().'" alt="" height="110px"
+                                             width="200px"></td>
+                                     <td>
+                                     </td>
+                                 </tr>
+                  ';
+                }
+                $output .= '
+                </tbody>
+                </table>
+            </div>';
 
                 return response()->json($output);
 

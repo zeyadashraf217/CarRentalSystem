@@ -31,6 +31,7 @@ Route::resource('user', UserController::class);
 Route::resource('car',CarController::class);
 Route::resource('office',OfficeController::class);
 Route::get('/search', [CarController::class, 'search'])->name('car.search');
+Route::get('/change', [CarController::class, 'change'])->name('car.change');
 Route::get('/model', [CarController::class, 'model'])->name('car.model');
 Route::get('/advanced', [CarController::class, 'advanced'])->name('car.advanced');
 

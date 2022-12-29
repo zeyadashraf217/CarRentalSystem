@@ -67,7 +67,7 @@
                 <div class="container d-flex justify-content-center  py-2">
                     <form action="{{ route('car.advanced') }}">
                         <button class="btn btn-success">
-                            Advanced Search<i class="fa-solid fa-magnifying-glass"></i>
+                            Advanced Search <i class="fa-solid fa-magnifying-glass"></i>
                         </button>
                     </form>
                 </div>
