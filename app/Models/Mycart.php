@@ -21,6 +21,6 @@ class Mycart extends Model
     public $timestamps = false;
 
     public function car(){
-        return $this->belongsTo(car::class);
+        return $this->belongsTo(Car::class,'car_id');
     }
 }
