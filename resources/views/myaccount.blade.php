@@ -16,7 +16,7 @@
         <div class="col-md-4 col-md-offset-4 pt-5">
             <h4>Account Information</h4>
             <hr>
-                <div class="form-group">
+                <div class="form-group leo">
                     <label for="name">name</label>
                     <input type="text"  name="name" class="form-control" value="{{ Auth::user()->name }}" disabled>
                 </div>
