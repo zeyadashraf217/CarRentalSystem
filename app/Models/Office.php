@@ -16,5 +16,4 @@ class Office extends Model
     ];
     public $timestamps = false;
     protected $primaryKey = 'Office_id';
-
 }
