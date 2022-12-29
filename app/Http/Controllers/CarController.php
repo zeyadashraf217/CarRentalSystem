@@ -77,7 +77,7 @@ class CarController extends Controller
     public function show($id)
     {
         $car = Car::find($id);
-        return view('cars',compact('car'));
+        return view('cars.details',compact('car'));
     }
 
     /**
@@ -132,15 +132,13 @@ class CarController extends Controller
     {
 
         if($request->ajax()) {
-            // @dd($request);
             $output = '';
             $cars = car::where('car_brand', 'LIKE', '%'.$request->searchs.'%')->get()->take(3);
                             if($cars) {
-                                // @dd($cars);
                                 foreach($cars as $car) {
                     $output .=
                      '
-                     <form action="">
+                     <form action="'. route("car.show",$car->car_id) .'">
                     <button  class="list-group-item list-group-item-action btn btn-link" >
                     <img src="'. $car->getFirstMediaUrl() .'" alt="" height="120px" width="200px">
                     <span class="ps-5 h4">   '.$car->car_brand.' </span>
@@ -161,7 +159,7 @@ class CarController extends Controller
 
         }
 
-        return view('main');
+        return redirect()->route('car.random');
 
     }
 
@@ -169,8 +167,14 @@ class CarController extends Controller
     {
         $brands=Car::select('car_brand')->distinct()->get();
         $models=Car::select('car_model')->distinct()->get();
+        $colors=Car::select('color')->distinct()->get();
+        $prices=Car::select('price')->distinct()->get();
+        $min_year=Car::min('year');
+        $max_year=Car::max('year');
+        $min_price=Car::min('price');
+        $max_price=Car::max('price');
         $offices=Office::get();
-        return view('cars.advanced',compact('brands','models','offices'));
+        return view('cars.advanced',compact('brands','models','offices','colors','prices','min_year','max_year','min_price','max_price'));
     }
 
     public function model(Request $request)
@@ -179,7 +183,7 @@ class CarController extends Controller
             $output = '';
             $cars = car::where('car_brand', 'LIKE', '%'.$request->brands.'%')->select('car_model')->distinct()->get();
                             if($cars) {
-                                $output .='<option value ="not null" > </option>';
+                                $output .='<option value ="true" > </option>';
                                 foreach($cars as $car) {
                     $output .=
                      '
@@ -205,6 +209,7 @@ class CarController extends Controller
             $x1='%';
             $x2='%';
             $x3='%';
+            $x6='%';
             if ($request->offices != "true") {
                 $x1=$request->offices;
             }
@@ -214,10 +219,20 @@ class CarController extends Controller
             if ($request->models != "true") {
                 $x3=$request->models;
             }
+            if ($request->colors != "true") {
+                $x6=$request->colors;
+            }
+            $x4=$request->min_years;
+            $x5=$request->max_years;
+            $x7=$request->min_prices;
+            $x8=$request->max_prices;
 
             $cars = car::where('office_id' ,'like', $x1)
                         ->where('car_brand','like',$x2)
                         ->where('car_model','like' ,$x3)
+                        ->where('color','like' ,$x6)
+                        ->whereBetween('year',[$x4,$x5])
+                        ->whereBetween('price',[$x7,$x8])
                         ->get();
                         $output .= ' <div class="card-body table-responsive p-0" style="height: 550px;">
                         <table class="table table-head-fixed text-nowrap">
@@ -227,7 +242,7 @@ class CarController extends Controller
                                     <th>Brand</th>
                                     <th>Model</th>
                                     <th>Year</th>
-                                    <th>Plate number</th>
+                                    <th>Price</th>
                                     <th>office</th>
                                     <th>Image</th>
                                 </tr>
@@ -242,7 +257,7 @@ class CarController extends Controller
                                      <td>  '.$car->car_brand.'  </td>
                                      <td> '.$car->car_model.' </td>
                                      <td> '.$car->year .'</td>
-                                     <td>'.$car->plate_id .'</td>
+                                     <td>'.$car->price .'</td>
                                      <td> '.$car->office->city .'</td>
                                      <td><img src="'.$car->getFirstMediaUrl().'" alt="" height="110px"
                                              width="200px"></td>
@@ -265,5 +280,9 @@ class CarController extends Controller
 
         return view('cars.advanced');
 
+    }
+    public function random (){
+        $random_products = Car::inRandomOrder()->get()->take(5);
+        return view('main',compact('random_products'));
     }
 }

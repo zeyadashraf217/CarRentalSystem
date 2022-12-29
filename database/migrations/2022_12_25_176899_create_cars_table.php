@@ -20,7 +20,6 @@ return new class extends Migration
             $table->integer('year')->unsigned();
             $table->string('plate_id')->unique();
             $table->enum('status',['active','out of service'])->default('active');
-            $table->boolean('rented')->default(0);
             $table->foreignId('office_id')->references('office_id')->on('offices');
             $table->float('price')->unsigned();
             $table->string('color');
