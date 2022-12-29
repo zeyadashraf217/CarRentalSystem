@@ -13,7 +13,12 @@ class MycartController extends Controller
 
     public function add_item(Request $request)
     {
-        Mycart::create(['user_id'=> $request->user_id ,'car_id'=> $request->car_id , 'pickup' => $request->pickup , 'return' => $request->return]);
+        $x=date("Y-m-d");
+        Mycart::create(['user_id'=> $request->user_id ,
+        'car_id'=> $request->car_id ,
+        'reserved'=> $x,
+        'pickup' => $request->pickup,
+        'return' => $request->return]);
         return redirect()->route('car.random')->with('message', 'item has been added successfully!');
     }
     public function mycart()
@@ -42,7 +47,7 @@ class MycartController extends Controller
             }
         }
 
-        return redirect()->route('women')->with('message', 'Order has been made successfully!');
+        return redirect()->route('random')->with('message', 'Order has been made successfully!');
 
     }
 }

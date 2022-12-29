@@ -14,7 +14,7 @@ class Mycart extends Model
         'user_id',
         'reserved',
         'plate_id',
-        'pick_up',
+        'pickup',
         'return',
         'payment'
     ];

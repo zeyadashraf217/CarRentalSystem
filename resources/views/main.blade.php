@@ -27,7 +27,7 @@
         </div>
     </div>
     @endif
-    
+
     {{-- Nav --}}
     <div class=" container-fluid background-black d-flex ">
         <div class=" col-2">
@@ -54,7 +54,9 @@
             <a class=" decoration text-bar text-dark fw-bold text-center mad" href="#">News</a>
         </div>
         <div class="col-2 col-xs-2 pb-2 px-1  mad mycart">
-            <button class="nav-link btn btn-link active pb-2"><i class="fa-solid fa-cart-shopping"></i>My Cart</button>
+            <form action="{{ route('mycart') }}">
+                <button class="nav-link btn btn-link active pb-2"><i class="fa-solid fa-cart-shopping"></i>My Cart</button>
+            </form>
         </div>
     </div>
 
