@@ -20,19 +20,35 @@
                     @csrf
                     <div class="form-group">
                         <label for="name">name</label>
-                        <input type="text"  name="name" class="form-control" required >
+                        <input type="text"  name="name" class="form-control" value="{{ old('name') }}" required >
+                        @error('name')
+                        <p style="color:red">{{ $message }}</p>
+                        @enderror
                     </div>
                     <div class="form-group">
                         <label for="email">email</label>
-                        <input type="text"  name="email" class="form-control" required >
+                        <input type="text"  name="email" class="form-control" value="{{ old('email') }}" required >
+                        @error('email')
+                        <p style="color:red">{{ $message }}</p>
+                        @enderror
                     </div>
                     <div class="form-group">
                         <label for="password">password</label>
-                        <input type="password"  name="password" class="form-control" required >
+                        <input type="password"  name="password" class="form-control"  required >
+                        @error('password')
+                        <p style="color:red">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    <div class="form-group">
+                        <label for="confirm-password">confirm-password</label>
+                        <input type="password" class="form-control" placeholder="Please Renter your password" name="password_confirmation">
                     </div>
                     <div class="form-group">
                         <label for="phonenumber">phone number</label>
-                        <input type="text"  name="phonenumber" class="form-control" required >
+                        <input type="text"  name="phonenumber" class="form-control" value="{{ old('phonenumber') }}" pattern = "[0-9]{1,20}" required >
+                        @error('phonenumber')
+                        <p style="color:red">{{ $message }}</p>
+                        @enderror
                     </div>
                     <div class="form-group pt-2">
                         <button type="submit" class="btn btn-labeled btn-success">

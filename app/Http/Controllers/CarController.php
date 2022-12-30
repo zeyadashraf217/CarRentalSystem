@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Car;
+use App\Models\CarUser;
 use App\Models\Office;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 
@@ -20,14 +22,19 @@ class CarController extends Controller
      {
          return Validator::make($data, [
              'plate_id' => ['required', 'string', 'max:255', 'unique:cars'],
-
+         ]);
+     }
+     protected function updatevalidator(array $data,$id)
+     {
+        $car=car::find($id);
+         return Validator::make($data, [
+            'plate_id' => ['required', 'string', 'max:255',\Illuminate\Validation\Rule::unique('cars')->ignore($car->car_id,'car_id')],
          ]);
      }
 
     public function index()
     {
         $cars=Car::get();
-        // dd($car);
         return view('cars.cars',compact('cars'));
     }
 
@@ -60,6 +67,7 @@ class CarController extends Controller
             'office_id' => $request->office_id,
             'plate_id' => $request->plate_id,
             'color' => $request->color,
+            'status' => $request->state
         ]);
 
         $car
@@ -103,6 +111,7 @@ class CarController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $this->updatevalidator($request->all(),$id)->validate();
         $car= Car::find($id);
         $car->update([
             'car_brand' => $request->brand,
@@ -111,7 +120,8 @@ class CarController extends Controller
             'year' => $request->year,
             'price' => $request->price,
             'office_id' => $request->office_id,
-            'color' => $request->color
+            'color' => $request->color,
+            'status' => $request->state
         ]);
         return redirect()->route('car.index');
     }
@@ -133,8 +143,9 @@ class CarController extends Controller
 
         if($request->ajax()) {
             $output = '';
-            $cars = car::where('car_brand', 'LIKE', '%'.$request->searchs.'%')->get()->take(3);
+            $cars = car::where('car_brand', 'LIKE', '%'.$request->searchs.'%')->where('status','active')->get();
                             if($cars) {
+                    $output.='<div class="list-group overflow-auto" id="lists" style="height: 200px">';
                                 foreach($cars as $car) {
                     $output .=
                      '
@@ -147,15 +158,14 @@ class CarController extends Controller
                     </form>
                     <div class="pt-1"></div>
                   ';
-        if(!$request->searchs){
-            $output = '';
-        }
-
                 }
-
+                $output.='</div>';
+            }
+                if(!$request->searchs || sizeof($cars)==0){
+                    $output = '';
+                }
                 return response()->json($output);
 
-            }
 
         }
 
@@ -222,6 +232,13 @@ class CarController extends Controller
             if ($request->colors != "true") {
                 $x6=$request->colors;
             }
+            if (Auth::user()->type=='admin')
+            {
+                $x9='%';
+            }
+            else {
+                $x9='active';
+            }
             $x4=$request->min_years;
             $x5=$request->max_years;
             $x7=$request->min_prices;
@@ -233,6 +250,7 @@ class CarController extends Controller
                         ->where('color','like' ,$x6)
                         ->whereBetween('year',[$x4,$x5])
                         ->whereBetween('price',[$x7,$x8])
+                        ->where('status','like',$x9)
                         ->get();
                         $output .= ' <div class="card-body table-responsive p-0" style="height: 550px;">
                         <table class="table table-head-fixed text-nowrap">
@@ -245,25 +263,29 @@ class CarController extends Controller
                                     <th>Price</th>
                                     <th>office</th>
                                     <th>Image</th>
+                                    <th>Rent</th>
                                 </tr>
                             </thead>
                             <tbody>';
                             if($cars) {
                                 foreach($cars as $car) {
                     $output .=
-                     '
-                                 <tr>
-                                     <td> '.$car->car_id.' </td>
-                                     <td>  '.$car->car_brand.'  </td>
-                                     <td> '.$car->car_model.' </td>
-                                     <td> '.$car->year .'</td>
-                                     <td>'.$car->price .'</td>
-                                     <td> '.$car->office->city .'</td>
-                                     <td><img src="'.$car->getFirstMediaUrl().'" alt="" height="110px"
-                                             width="200px"></td>
-                                     <td>
-                                     </td>
-                                 </tr>
+
+                    '<tr>
+
+                                        <td> '.$car->car_id.' </td>
+                                        <td>  '.$car->car_brand.'  </td>
+                                        <td> '.$car->car_model.' </td>
+                                        <td> '.$car->year .'</td>
+                                        <td>'.$car->price .'</td>
+                                        <td> '.$car->office->city .'</td>
+                                        <td><img src="'.$car->getFirstMediaUrl().'" alt="" height="110px"
+                                                width="200px"></td>
+                                        <td class="pt-5">
+                                        <form action="'. route("car.show",$car->car_id) .' class="pt-2">
+                                        <button class="btn btn-danger">Rent Now</button>
+                                        </td>
+                                                </tr>
                   ';
                 }
                 $output .= '
@@ -284,5 +306,162 @@ class CarController extends Controller
     public function random (){
         $random_products = Car::inRandomOrder()->get()->take(5);
         return view('main',compact('random_products'));
+    }
+
+
+
+    public function reservation (Request $request){
+        $Reservations=CarUser::where('car_id',$request->car_id)->get();
+        $CurrentDate=date("Y-m-d");
+        if($request->ajax()) {
+            $flag1=0;
+            $flag2=0;
+            $output = '';
+            $pickup=$request->pickups;
+            $return =$request->returns;
+            if ($pickup && $return){
+
+                if(strtotime($CurrentDate) > strtotime($pickup) || strtotime($CurrentDate) >strtotime($return) || strtotime($return) < strtotime($pickup))
+                {
+                    $flag1=1;
+                    $output .= '<img src="https://i.kym-cdn.com/entries/icons/original/000/018/489/nick-young-confused-face-300x256-nqlyaa.jpg" height="250px" width="250px">';
+
+                }
+
+                foreach($Reservations as $rent)
+                {
+                    if ((((strtotime($pickup) >= strtotime($rent->pickup)) && (strtotime($pickup) < strtotime($rent->return)))
+                         || ((strtotime($return) >= strtotime($rent->pickup))) && (strtotime($pickup) < strtotime($rent->return)))
+                         && $flag1==0)
+                    {
+                        $output .= '<h3 class="text-danger" >This Car is already rented between '.$rent->pickup.' and '.$rent->return.'</h3>' ;
+                        $flag2=1;
+                        break;
+                    };
+                }
+                if ($flag1==0 && $flag2==0)
+                {
+
+                        $output .= ' <button type="submit" class="btn btn-labeled btn-success">
+                        <span class="btn-label pe-3"><i class="fa-solid fa-cart-shopping"></i></span>Add to my Cart
+                    </button>' ;
+
+                }
+            }
+
+            return response()->json($output);
+        }
+
+        return redirect()->route('car.random');
+    }
+
+    public function ReservationSearch (Request $request){
+        $Reservations=CarUser::where('reserved',$request->reservations)->get();
+        if($request->ajax()) {
+            $output = '';
+
+            $output .= ' <div class="card-body table-responsive p-0" style="height: 550px;">
+            <table class="table table-head-fixed text-nowrap">
+                <thead>
+                    <tr>
+                        <th>Car ID</th>
+                        <th>Brand</th>
+                        <th>Model</th>
+                        <th>User ID</th>
+                        <th>User Name</th>
+                        <th>Price</th>
+                        <th>office</th>
+                        <th>From</th>
+                        <th>To</th>
+                        <th>Image</th>
+                    </tr>
+                </thead>
+                <tbody>';
+
+                if($Reservations) {
+                    foreach($Reservations as $reserve) {
+        $output .=
+
+        '<tr>
+                            <td> '.$reserve->car_id.' </td>
+                            <td>  '.$reserve->car->car_brand.'  </td>
+                            <td> '.$reserve->car->car_model.' </td>
+                            <td> '.$reserve->user->id.' </td>
+                            <td> '.$reserve->user->name.' </td>
+                            <td> '.$reserve->car->price.' </td>
+                            <td> '.$reserve->car->office->city.' </td>
+                            <td> '.$reserve->pickup.' </td>
+                            <td> '.$reserve->return.' </td>
+                            <td><img src="'.$reserve->car->getFirstMediaUrl().'" alt="" height="110px"
+                            width="200px"></td>
+         </tr>
+      ';
+    }
+    $output .= '
+    </tbody>
+    </table>
+</div>';
+
+            }
+
+            return response()->json($output);
+        }
+
+        return redirect()->route('reservation.search');
+    }
+
+
+    public function IntervalSearch (Request $request){
+        $Reservations=CarUser::where('pickup','>=',$request->starts)->where('return','<=',$request->endswitch)->get();
+        if($request->ajax()) {
+            $output = '';
+            $output .= ' <div class="card-body table-responsive p-0" style="height: 550px;">
+            <table class="table table-head-fixed text-nowrap">
+                <thead>
+                    <tr>
+                        <th>Car ID</th>
+                        <th>Brand</th>
+                        <th>Model</th>
+                        <th>User ID</th>
+                        <th>User Name</th>
+                        <th>Price</th>
+                        <th>office</th>
+                        <th>From</th>
+                        <th>To</th>
+                        <th>Image</th>
+                    </tr>
+                </thead>
+                <tbody>';
+
+                if($Reservations) {
+                    foreach($Reservations as $reserve) {
+        $output .=
+
+        '<tr>
+                            <td> '.$reserve->car_id.' </td>
+                            <td>  '.$reserve->car->car_brand.'  </td>
+                            <td> '.$reserve->car->car_model.' </td>
+                            <td> '.$reserve->user->id.' </td>
+                            <td> '.$reserve->user->name.' </td>
+                            <td> '.$reserve->car->price.' </td>
+                            <td> '.$reserve->car->office->city.' </td>
+                            <td> '.$reserve->pickup.' </td>
+                            <td> '.$reserve->return.' </td>
+                            <td><img src="'.$reserve->car->getFirstMediaUrl().'" alt="" height="110px"
+                            width="200px"></td>
+         </tr>
+      ';
+    }
+    $output .= '
+    </tbody>
+    </table>
+</div>';
+
+            }
+
+            return response()->json($output);
+        }
+
+        return redirect()->route('report.reservation');
     }
 }

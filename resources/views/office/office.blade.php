@@ -2,7 +2,8 @@
 @section('content')
 <script>
       $('#item-2').removeClass('active');
-        $('#item-1').removeClass('active');
+        $('#item-1').removeClass('active')
+        $('#item-4').removeClass('active');;
         $('#item-3').addClass('active');
         e.preventDefault();
 </script>

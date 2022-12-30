@@ -29,25 +29,54 @@
                 {{ $car->price }}$
             </div>
             <div class="pt-3">
-                <form action="{{ route('add_item') }}" method="POST">
+                <form action="{{ route('add_item') }}" method="POST" id="forms">
                     @csrf
                     <div class="form-group py-2">
-                        <label for="pickup">Pickup Date</label>
-                        <input type="date" name="pickup" class="form-control" required>
+                        <label for="pickups">Pickup Date</label>
+                        <input type="date" id="pickup" name="pickups" class="form-control" required>
                     </div>
                     <div class="form-group py-2">
-                        <label for="return">Return Date</label>
-                        <input type="date" name="return" class="form-control" required>
+                        <label for="returns">Return Date</label>
+                        <input type="date" id="return" name="returns" class="form-control" required>
                     </div>
-                    <button type="submit" class="btn btn-labeled btn-success">
-                        <span class="btn-label pe-3"><i class="fa-solid fa-cart-shopping"></i></span>Add to my Cart
-                    </button>
+                    <div id='add'>
+                    </div>
         <input type="text" name='user_id' value="{{ Auth::user()->id }}" hidden>
-        <input type="text" name='car_id' value="{{ $car->car_id }}" hidden>
+        <input type="text" name='car_id' id="car_id" value="{{ $car->car_id }}" hidden>
                     </form>
             </div>
         </div>
     </div>
 </div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+
+<script type="text/javascript">
+    $.ajaxSetup({ headers: { 'csrftoken' : '{{ csrf_token() }}' } });
+</script>
+
+<script>
+    $(document).ready(function () {
+        $('#forms').on('change', function(){
+            pickup = $("input#pickup").val()
+            retrn = $("input#return").val()
+            id = $("input#car_id").val()
+
+            $.ajax({
+                type: "GET",
+                url: "/reservation",
+                data: {
+                    'pickups':pickup,
+                    'returns':retrn,
+                    'car_id':id,
+            },
+                success: function (data) {
+                    $('#add').html(data);
+                }
+            });
+        });
+    });
+</script>
 </body>
 </html>

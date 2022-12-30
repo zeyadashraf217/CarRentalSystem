@@ -3,6 +3,7 @@
 <script>
       $('#item-2').removeClass('active');
         $('#item-3').removeClass('active');
+        $('#item-4').removeClass('active');
         $('#item-1').addClass('active');
         e.preventDefault();
 </script>
@@ -32,7 +33,7 @@
             </div>
         </div>
         </div>
-        <div class="card-body table-responsive p-0" style="height: 550px;">
+        <div class="card-body table-responsive p-0" style="height: 530px;">
         <table class="table table-head-fixed text-nowrap">
         <thead>
         <tr>
@@ -74,6 +75,14 @@
 
         </div>
         </div>
+
+            <div class="container d-flex justify-content-center">
+                <form action="{{ route('user.advanced') }}">
+                    <button class="btn btn-success">
+                        Advanced Search <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                </form>
+            </div>
 
 
 

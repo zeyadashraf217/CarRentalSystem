@@ -46,6 +46,13 @@
                         <input type="number" name="price" class="form-control" required>
                     </div>
                     <div class="form-group">
+                        <label for="state">state</label>
+                        <select name="state" class="form-control" required>
+                            <option value="active">Active</option>
+                            <option value="out of service">Out of service</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
                         <label for="office">office</label>
                         <select name="office_id" class="form-control" required>
                             @foreach ($offices as $office )

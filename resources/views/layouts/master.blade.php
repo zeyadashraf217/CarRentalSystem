@@ -68,6 +68,18 @@
     </form>
         </li>
 
+        <li class="nav-item" >
+            <form action="{{ route('reservation.search') }}">
+
+        <button class="nav-link btn btn-link" id="item-4">
+            <i class="fa-solid fa-list"></i>
+            <p>
+                Reservation Search
+                </p>
+                </button>
+            </form>
+                </li>
+
 </ul>
 </nav>
 

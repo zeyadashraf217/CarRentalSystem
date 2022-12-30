@@ -29,9 +29,10 @@
                 <thead>
                     <tr>
                         <th>thumbnail</th>
-                        <th>name</th>
-                        <th>price</th>
-                        <th>quantity</th>
+                        <th>Brand</th>
+                        <th>Model</th>
+                        <th>Price per day</th>
+                        <th>Total</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -42,11 +43,11 @@
                             <tr>
 
 
-                                <td><img src="{{ $item->car->getFirstMediaUrl() }}" alt="" height="100px">
-                                </td>
+                                <td><img src="{{ $item->car->getFirstMediaUrl() }}" alt="" height="100px" width="200px"></td>
                                 <td class="h3 pt-5">{{ $item->car->car_brand }} </td>
                                 <td class="h3 pt-5">{{ $item->car->car_model }} </td>
-                                <td class="h3 pt-5"> {{ $item->car->price }}</td>
+                                <td class="h3 pt-5 ps-4">{{ $item->car->price }} </td>
+                                <td class="h3 pt-5"> {{ $item->payment }}</td>
                                 <td class="pt-5">
                                     <form action="{{ route('mycart.destroy', $item->id) }}" method="POST">
                                         @csrf

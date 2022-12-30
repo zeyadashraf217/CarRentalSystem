@@ -25,7 +25,6 @@ class Car extends Model implements HasMedia
     ];
     public $timestamps = false;
 
-
     protected $primaryKey = 'car_id';
 
         public function office(){

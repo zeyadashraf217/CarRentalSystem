@@ -67,10 +67,8 @@
                     </div>
                 </div>
                 {{-- search items --}}
-                <div class="container justify-content-center w-50 py-2 ">
-                    <div class="list-group" id="lists">
+                <div class="container justify-content-center w-50 py-2 overflow-auto " id="lists">
 
-                    </div>
                 </div>
 
                 {{-- Advanced search --}}

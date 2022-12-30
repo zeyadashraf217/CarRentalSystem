@@ -21,16 +21,16 @@
                     @csrf
                     <div class="form-group">
                         <label for="brand">Brand</label>
-                        <input type="text"  name="brand" class="form-control" value="{{ $car->brand }}" required >
+                        <input type="text"  name="brand" class="form-control" value="{{ $car->car_brand }}" required >
                     </div>
                     <div class="form-group">
                         <label for="model">Model</label>
-                        <input type="text"  name="model" class="form-control" value="{{ $car->model }}" required >
+                        <input type="text"  name="model" class="form-control" value="{{ $car->car_model }}" required >
                     </div>
 
                     <div class="form-group">
                         <label for="model">Plate Number</label>
-                        <input type="text"  name="plate_id" class="form-control" value="{{ $car->model }}" required >
+                        <input type="text"  name="plate_id" class="form-control" value="{{ $car->plate_id }}" required >
                         @error('plate_id')
                         <p style="color:red">{{ $message }}</p>
                         @enderror
@@ -49,6 +49,13 @@
                     <div class="form-group">
                         <label for="price">Price</label>
                         <input type="number"  name="price" class="form-control" value="{{ $car->price }}" required >
+                    </div>
+                    <div class="form-group">
+                        <label for="state">state</label>
+                        <select name="state" class="form-control" required>
+                            <option value="active">Active</option>
+                            <option value="out of service">Out of service</option>
+                        </select>
                     </div>
 
                     <div class="form-group">

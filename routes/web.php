@@ -19,9 +19,13 @@ use Illuminate\Support\Facades\DB;
 |
 */
 
-// Route::get('/', function () {
-//     return view('main');
-// });
+Route::get('/reservesearch', function () {
+    return view('reservation');
+})->name('reservation.search');
+
+Route::get('/interval', function () {
+    return view('report.reservation');
+})->name('interval.search');
 
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
@@ -34,9 +38,12 @@ Route::get('/search', [CarController::class, 'search'])->name('car.search');
 Route::get('/change', [CarController::class, 'change'])->name('car.change');
 Route::get('/model', [CarController::class, 'model'])->name('car.model');
 Route::get('/advanced', [CarController::class, 'advanced'])->name('car.advanced');
+Route::get('/useradvanced', [UserController::class, 'useradvanced'])->name('user.advanced');
 Route::get('/', [CarController::class, 'random'])->name('car.random');
 Route::get('/home', [CarController::class, 'random']);
-
+Route::get('/reservation', [CarController::class, 'reservation'])->name('car.reservation');
+Route::get('/reservationsearch', [CarController::class, 'reservationsearch'])->name('reservationsearch');
+Route::get('/userchange', [UserController::class, 'change'])->name('user.change');
 Route::post('/alert', [App\Http\Controllers\MycartController::class, 'add_item'])->name('add_item');
 Route::get('/mycart', [App\Http\Controllers\MycartController::class, 'mycart'])->name('mycart')->middleware('auth');
 Route::delete('mycart/{id}', [App\Http\Controllers\MycartController::class, 'destroy'])->name('mycart.destroy');

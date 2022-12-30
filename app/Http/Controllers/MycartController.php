@@ -13,12 +13,20 @@ class MycartController extends Controller
 
     public function add_item(Request $request)
     {
+        $car=Car::find($request->car_id);
+        $price = $car->price;
         $x=date("Y-m-d");
-        Mycart::create(['user_id'=> $request->user_id ,
-        'car_id'=> $request->car_id ,
+        $pickup= $request->pickups;
+        $return= $request->returns;
+        $days = strtotime($return) - strtotime($pickup);
+        $days = $days/86400;
+        $payment= $days * $price;
+        Mycart::create(['user_id'=> $request->user_id,
+        'car_id'=> $request->car_id,
         'reserved'=> $x,
-        'pickup' => $request->pickup,
-        'return' => $request->return]);
+        'pickup' => $request->pickups,
+        'return' => $request->returns,
+        'payment' => $payment]);
         return redirect()->route('car.random')->with('message', 'item has been added successfully!');
     }
     public function mycart()
@@ -33,21 +41,31 @@ class MycartController extends Controller
     }
     public function checkout()
     {
-        $total=0;
         $items= Mycart::get();
-        $time = 5;
         foreach ($items as $item)
         {
             if ($item->user_id == Auth::user()->id){
                 $car_id=$item->car->car_id;
                 $car =Car::find($car_id);
-                $total+=$car->price * $item->quantity;
-                CarUser::create(['user_id' => Auth::user()->id,'car_id'=>$car_id,'quantity'=>$item->quantity,'price'=>$car->price * $item->quantity]);
+                $price=$car->price;
+                $reserved=$item->reserved;
+                $pickup=$item->pickup;
+                $return=$item->return;
+                $days = strtotime($return) - strtotime($pickup);
+                $days = $days/86400;
+                $payment= $days * $price;
+                CarUser::create(['user_id' => Auth::user()->id,
+                'car_id'=>$car_id,
+                'reserved'=>$reserved,
+                'pickup'=>$pickup,
+                'return'=>$return,
+                'payment'=>$payment
+            ]);
                 Mycart::find($item->id)->delete();
             }
         }
 
-        return redirect()->route('random')->with('message', 'Order has been made successfully!');
+        return redirect()->route('car.random')->with('message', 'Order has been made successfully!');
 
     }
 }
