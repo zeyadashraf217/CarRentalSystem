@@ -40,6 +40,7 @@ Route::get('/', [CarController::class, 'random'])->name('car.random');
 Route::get('/home', [CarController::class, 'random']);
 Route::get('/reservation', [CarController::class, 'reservation'])->name('car.reservation');
 Route::get('/reservationsearch', [CarController::class, 'reservationsearch'])->name('reservationsearch');
+Route::get('/intervall', [CarController::class, 'IntervalSearch'])->name('intervalsearch');
 Route::get('/intervall2', [CarController::class, 'IntervalSearch2'])->name('intervalsearch2');
 Route::get('/userchange', [UserController::class, 'change'])->name('user.change');
 Route::post('/alert', [App\Http\Controllers\MycartController::class, 'add_item'])->name('add_item');
@@ -50,6 +51,7 @@ Route::post('/Checkout', [App\Http\Controllers\MycartController::class, 'checkou
 Route::get('/interval', function () {
     return view('report.reservation');
 })->name('interval.search');
+
 Route::get('/ineterval2', [App\Http\Controllers\CarController::class, 'platesearch'])->name('interval.search2');
 
 Route::get('/status', function () {

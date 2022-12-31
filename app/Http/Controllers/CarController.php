@@ -417,8 +417,6 @@ class CarController extends Controller
             $output = '';
             if($request->starts && $request->ends)
             {
-
-
             $output .= ' <div class="card-body table-responsive p-0" style="height: 550px;">
             <table class="table table-head-fixed text-nowrap">
                 <thead>
@@ -436,7 +434,6 @@ class CarController extends Controller
                     </tr>
                 </thead>
                 <tbody>';
-
                 if($Reservations) {
                     foreach($Reservations as $reserve) {
                         if ((strtotime($reserve->pickup) >= strtotime($request->starts)) && (strtotime($reserve->return) <= strtotime($request->ends)) )
@@ -534,7 +531,7 @@ class CarController extends Controller
             return response()->json($output);
         }
 
-        return redirect()->route('interval.search');
+        return redirect()->route('interval.search2');
     }
 
     public function status (Request $request){
@@ -606,40 +603,38 @@ class CarController extends Controller
 
     public function daily (Request $request){
         $Reservations=CarUser::get();
+
+
         if($request->ajax()) {
             $output = '';
-        $start=$request->starts;
-        $end=$request->ends;
-
+            $start=strtotime($request->starts);
             if($request->starts && $request->ends)
             {
             $output .= ' <div class="card-body table-responsive p-0" style="height: 550px;">
             <table class="table table-head-fixed text-nowrap">
-                <theader>
+                <thead>
                 <th>Day</th>
                 <th>Count</th>
-                </theader>
+                </thead>
                 <tbody>';
-                $start_time= strtotime($start);
-                while(strtotime($start) <= strtotime($end)){
+                while($start <= strtotime($request->ends)){
                     $count=0;
                     foreach($Reservations as $reserve) {
-                        if ( (strtotime($reserve->pickup) >= $start_time ) && (strtotime($reserve->return) <= $start_time ) ){
+                        if ( (strtotime($reserve->pickup) <= $start ) && (strtotime($reserve->return) >= $start ) ){
                         $count+=$reserve->car->price;
+                    }
+                }
                         $output .=
                         '<tr>
-                            <td> '.date("Y-m-d ", $start_time).' </td>
-                            <td>  '.$count.'  </td>
-                        </tr>';
-    }
-}
-$start_time+=86400;
-}
+                        <td> '.date('d/m/Y', $start).'</td>
+                       <td>  '.$count.'  </td>
+                         </tr>';
+ $start+=86400;
+ }
     $output .= '
     </tbody>
     </table>
 </div>';
-$output= $request->ends;
 }
 return response()->json($output);
         }
