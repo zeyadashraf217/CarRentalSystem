@@ -30,4 +30,4 @@ class Car extends Model implements HasMedia
         public function office(){
             return $this->belongsTo(Office::class,'office_id');
         }
-}
+    }

@@ -5,12 +5,12 @@
     $('#item-2').removeClass('active');
       $('#item-3').removeClass('active');
       $('#item-4').removeClass('active');
-      $('#item-6').removeClass('active');
+      $('#item-5').removeClass('active');
       $('#item-7').removeClass('active');
       $('#item-8').removeClass('active');
       $('#item-9').removeClass('active');
 
-      $('#item-5').addClass('active');
+      $('#item-6').addClass('active');
       e.preventDefault();
 </script>
 <div class="content-wrapper">
@@ -18,7 +18,7 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0">Interval Search</h1>
+                    <h1 class="m-0">Reservation Search by plate number</h1>
                 </div>
             </div>
         </div>
@@ -28,7 +28,7 @@
 <form action=""  id="forms">
     <div class="row">
 
-        <div class=" offset-2 col-4 pt-3">
+        <div class=" offset-2 col-3 pt-3">
             <div class="form-group py-2">
             <label for="starts">Start Date</label>
             <input type="date" id="start" name="starts" class="form-control" required>
@@ -36,12 +36,25 @@
 
     </div>
 
-    <div class="col-4 pt-3">
+    <div class="col-3 pt-3">
         <div class="form-group py-2">
             <label for="ends">End Date</label>
             <input type="date" id="end" name="ends" class="form-control" required>
         </div>
     </div>
+<div class="col-3 pt-3">
+    <div class="form-group py-2">
+        <label for="plates">Plate Id</label>
+        <select  class="form-control" id="plate" name="plates" required>
+            <option value="true"></option>
+            @foreach ($cars as $car)
+                <option value=" {{ $car->plate_id }} "> {{ $car->plate_id }}</option>
+                @endforeach
+            </select>
+        </div>
+    </div>
+
+
 </div>
 </form>
 <div id='add' class="offset-2">
@@ -58,12 +71,15 @@
         $('#forms').on('change', function(){
             start = $("input#start").val()
             end = $("input#end").val()
+            plate= $("select#plate").val()
+            console.log(plate)
             $.ajax({
                 type: "GET",
-                url: "/intervall",
+                url: "/intervall2",
                 data: {
                     'starts':start,
                     'ends':end,
+                    'plates':plate
             },
                 success: function (data) {
                     $('#add').html(data);

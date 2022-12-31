@@ -5,12 +5,12 @@
     $('#item-2').removeClass('active');
       $('#item-3').removeClass('active');
       $('#item-4').removeClass('active');
+      $('#item-5').removeClass('active');
       $('#item-6').removeClass('active');
       $('#item-7').removeClass('active');
       $('#item-8').removeClass('active');
-      $('#item-9').removeClass('active');
 
-      $('#item-5').addClass('active');
+      $('#item-9').addClass('active');
       e.preventDefault();
 </script>
 <div class="content-wrapper">
@@ -60,12 +60,13 @@
             end = $("input#end").val()
             $.ajax({
                 type: "GET",
-                url: "/intervall",
+                url: "/interval2",
                 data: {
                     'starts':start,
                     'ends':end,
             },
                 success: function (data) {
+                    console.log(data);
                     $('#add').html(data);
                 }
             });

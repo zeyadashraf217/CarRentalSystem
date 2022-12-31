@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CarUser;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -181,7 +182,81 @@ class UserController extends Controller
 
 
 
-        return view('user.advanced_user');
+        return redirect()->route('user.advanced');
 
+    }
+
+    public function UserReservation()
+    {
+        $names=User::select('name')->distinct()->get();
+        $users=User::get();
+        return view('report.reservation3',compact('names','users'));
+    }
+
+    public function change2(Request $request)
+    {
+        if($request->ajax()) {
+            $output = '';
+            $x1='%';
+            $x2='%';
+            $x3='%';
+            if ($request->names != "true") {
+                $x1=$request->names;
+            }
+            if ($request->emails != "true") {
+                $x2= $request->emails;
+            }
+            if ($request->phones != "true") {
+                $x3=$request->phones;
+            }
+            if($request->emails!="true" || $request->phones!="true")
+            {
+
+            $user = User::where('name' ,'like', $x1)
+                        ->where('email','like',$x2)
+                        ->where('phonenumber','like' ,$x3)
+                        ->get()->last();
+            $Reservations = CarUser::where('user_id',$user->id)->get();
+                        $output .= ' <div class="card-body table-responsive p-0" style="height: 550px;">
+                        <table class="table table-head-fixed text-nowrap">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Brand</th>
+                                    <th>Model</th>
+                                    <th>Price</th>
+                                    <th>Img</th>
+                                    <th>From</th>
+                                    <th>To</th>
+                                </tr>
+                            </thead>
+                            <tbody>';
+                            if($Reservations) {
+                                foreach($Reservations as $reserve) {
+                    $output .=
+
+                    '<tr>
+                    <td>  '.$reserve->user->name.'  </td>
+                    <td> '.$reserve->car->car_brand.' </td>
+                    <td> '.$reserve->car->car_model.' </td>
+                    <td> '.$reserve->car->price.' </td>
+                    <td><img src="'.$reserve->car->getFirstMediaUrl().'" alt="" height="110px"
+                    width="200px"></td>
+                    <td> '.$reserve->pickup.' </td>
+                    <td> '.$reserve->return.' </td>
+                    </tr>
+                  ';
+                }
+                $output .= '
+                </tbody>
+                </table>
+            </div>';
+        }
+
+    }
+                return response()->json($output);
+
+        }
+        return redirect()->route('userreservation');
     }
 }

@@ -8,7 +8,6 @@
 <title>AdminLTE 3 | Starter</title>
 <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
 
-<link rel="stylesheet" href="{{ asset('build/assets/app.e9da660b.css') }}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     </head>
@@ -19,7 +18,7 @@
 <aside class="main-sidebar sidebar-dark-primary elevation-4 overflow-auto">
 
 <a href="{{ url('') }}" class="brand-link">
-<span class="brand-text font-weight-light">NFALEON Carz©</span>
+<span class="brand-text font-weight-light">NFLEON Carz©</span>
 </a>
 
 <div class="sidebar overflow-scroll">
@@ -67,7 +66,6 @@
         </button>
     </form>
         </li>
-
         <li class="nav-item" >
             <form action="{{ route('reservation.search') }}">
 
@@ -79,6 +77,67 @@
                 </button>
             </form>
                 </li>
+
+
+        <li class="nav-item" >
+            <form action="{{ route('interval.search') }}">
+
+        <button class="nav-link btn btn-link" id="item-5">
+            <i class="fa-solid fa-list"></i>
+            <p>
+                Interval Search
+                </p>
+                </button>
+            </form>
+        </li>
+
+        <li class="nav-item" >
+            <form action="{{ route('interval.search2') }}">
+
+        <button class="nav-link btn btn-link" id="item-6">
+            <i class="fa-solid fa-list"></i>
+            <p>
+                Interval Search 2
+                </p>
+                </button>
+            </form>
+        </li>
+
+        <li class="nav-item" >
+            <form action="{{ route('report.status') }}">
+
+        <button class="nav-link btn btn-link" id="item-7">
+            <i class="fa-solid fa-list"></i>
+            <p>
+            Status Search
+                </p>
+                </button>
+            </form>
+        </li>
+
+        <li class="nav-item" >
+            <form action="{{ route('userreservation') }}">
+
+        <button class="nav-link btn btn-link" id="item-8">
+            <i class="fa-solid fa-list"></i>
+            <p>
+            Customer Reservation
+                </p>
+                </button>
+            </form>
+        </li>
+
+        <li class="nav-item" >
+            <form action="{{ route('daily') }}">
+        <button class="nav-link btn btn-link" id="item-9">
+            <i class="fa-solid fa-list"></i>
+            <p>
+            Daily Payments
+                </p>
+                </button>
+            </form>
+        </li>
+
 
 </ul>
 </nav>
@@ -108,7 +167,6 @@
 
 
 
-        <script src="{{ asset('build/assets/app.325167a4.js') }}"></script>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
 
 </body>

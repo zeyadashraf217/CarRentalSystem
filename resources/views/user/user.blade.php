@@ -4,6 +4,11 @@
       $('#item-2').removeClass('active');
         $('#item-3').removeClass('active');
         $('#item-4').removeClass('active');
+        $('#item-5').removeClass('active');
+        $('#item-6').removeClass('active');
+        $('#item-7').removeClass('active');
+        $('#item-8').removeClass('active');
+        $('#item-9').removeClass('active');
         $('#item-1').addClass('active');
         e.preventDefault();
 </script>

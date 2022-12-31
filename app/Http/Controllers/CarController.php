@@ -321,7 +321,7 @@ class CarController extends Controller
             $return =$request->returns;
             if ($pickup && $return){
 
-                if(strtotime($CurrentDate) > strtotime($pickup) || strtotime($CurrentDate) >strtotime($return) || strtotime($return) < strtotime($pickup))
+                if(strtotime($CurrentDate) > strtotime($pickup) || strtotime($CurrentDate) >strtotime($return) || strtotime($return) < strtotime($pickup) || strtotime($pickup) == strtotime($return) )
                 {
                     $flag1=1;
                     $output .= '<img src="https://i.kym-cdn.com/entries/icons/original/000/018/489/nick-young-confused-face-300x256-nqlyaa.jpg" height="250px" width="250px">';
@@ -378,7 +378,7 @@ class CarController extends Controller
                 </thead>
                 <tbody>';
 
-                if($Reservations) {
+                if($Reservations ) {
                     foreach($Reservations as $reserve) {
         $output .=
 
@@ -412,9 +412,13 @@ class CarController extends Controller
 
 
     public function IntervalSearch (Request $request){
-        $Reservations=CarUser::where('pickup','>=',$request->starts)->where('return','<=',$request->endswitch)->get();
+        $Reservations=CarUser::get();
         if($request->ajax()) {
             $output = '';
+            if($request->starts && $request->ends)
+            {
+
+
             $output .= ' <div class="card-body table-responsive p-0" style="height: 550px;">
             <table class="table table-head-fixed text-nowrap">
                 <thead>
@@ -435,6 +439,7 @@ class CarController extends Controller
 
                 if($Reservations) {
                     foreach($Reservations as $reserve) {
+                        if ((strtotime($reserve->pickup) >= strtotime($request->starts)) && (strtotime($reserve->return) <= strtotime($request->ends)) )
         $output .=
 
         '<tr>
@@ -456,12 +461,190 @@ class CarController extends Controller
     </tbody>
     </table>
 </div>';
+}
 
             }
 
             return response()->json($output);
         }
 
-        return redirect()->route('report.reservation');
+        return redirect()->route('interval.search');
     }
+
+
+    public function platesearch (){
+        $cars=Car::get();
+        return view('report.reservation2',compact('cars'));
+    }
+
+
+
+    public function IntervalSearch2 (Request $request){
+        $car=Car::where('plate_id',$request->plates)->get()->last();
+        $Reservations=CarUser::where('car_id',$car->car_id)->get();
+        if($request->ajax()) {
+            $output = '';
+            if($request->starts && $request->ends && $request->plates)
+            {
+            $output .= ' <div class="card-body table-responsive p-0" style="height: 550px;">
+            <table class="table table-head-fixed text-nowrap">
+                <thead>
+                    <tr>
+                        <th>Car ID</th>
+                        <th>Brand</th>
+                        <th>Model</th>
+                        <th>User ID</th>
+                        <th>User Name</th>
+                        <th>Price</th>
+                        <th>office</th>
+                        <th>From</th>
+                        <th>To</th>
+                        <th>Image</th>
+                    </tr>
+                </thead>
+                <tbody>';
+                if($Reservations) {
+                    foreach($Reservations as $reserve) {
+                        if ((strtotime($reserve->pickup) >= strtotime($request->starts)) && (strtotime($reserve->return) <= strtotime($request->ends)) )
+        $output .=
+
+        '<tr>
+                            <td> '.$reserve->car_id.' </td>
+                            <td>  '.$reserve->car->car_brand.'  </td>
+                            <td> '.$reserve->car->car_model.' </td>
+                            <td> '.$reserve->user->id.' </td>
+                            <td> '.$reserve->user->name.' </td>
+                            <td> '.$reserve->car->price.' </td>
+                            <td> '.$reserve->car->office->city.' </td>
+                            <td> '.$reserve->pickup.' </td>
+                            <td> '.$reserve->return.' </td>
+                            <td><img src="'.$reserve->car->getFirstMediaUrl().'" alt="" height="110px"
+                            width="200px"></td>
+         </tr>
+      ';
+    }
+    $output .= '
+    </tbody>
+    </table>
+</div>';
+}
+
+            }
+
+            return response()->json($output);
+        }
+
+        return redirect()->route('interval.search');
+    }
+
+    public function status (Request $request){
+        $date =$request->dates;
+        $cars=Car::get();
+        $reservation=CarUser::get();
+        // $Reservations=CarUser::where('pickup','<', $date)
+        //                        ->where('return','>',$date )
+        //                        ->get();
+        // $Reservations2=CarUser::Car()-> where('car_id',$Reservations->car->car_id )->get();
+        // $Reservations2=Car::get();
+        if($request->ajax()) {
+            $output = '';
+
+
+            $output .= ' <div class="card-body table-responsive p-0" style="height: 550px;">
+            <table class="table table-head-fixed text-nowrap">
+                <thead>
+                    <tr>
+                        <th>Car ID</th>
+                        <th>Brand</th>
+                        <th>Model</th>
+                        <th>Office</th>
+                        <th>Status</th>
+                        <th>Rented</th>
+                        <th>Img</th>
+
+                    </tr>
+                </thead>
+                <tbody>';
+                if($cars) {
+                    foreach($cars as $car) {
+                        $flag='no';
+                        foreach ($reservation as $reserve){
+                            if ($reserve->car_id == $car->car_id ){
+                                if($reserve->pickup <= $date && $reserve->return >= $date){
+                                        $flag='yes';
+                                }
+                            }
+                        }
+
+        $output .=
+
+        '<tr>
+                            <td> '.$car->car_id.' </td>
+                            <td>  '.$car->car_brand.'  </td>
+                            <td> '.$car->car_model.' </td>
+                            <td> '.$car->office->city.' </td>
+                            <td> '.$car->status.' </td>
+                            <td>'. $flag.' </td>
+                            <td><img src="'.$car->getFirstMediaUrl().'" alt="" height="110px"
+                            width="200px"></td>
+
+
+         </tr>';
+    }
+    $output .= '
+    </tbody>
+    </table>
+</div>';
+
+            }
+            return response()->json($output);
+        }
+
+        return redirect()->route('report.status');
+    }
+
+
+    public function daily (Request $request){
+        $Reservations=CarUser::get();
+        if($request->ajax()) {
+            $output = '';
+        $start=$request->starts;
+        $end=$request->ends;
+
+            if($request->starts && $request->ends)
+            {
+            $output .= ' <div class="card-body table-responsive p-0" style="height: 550px;">
+            <table class="table table-head-fixed text-nowrap">
+                <theader>
+                <th>Day</th>
+                <th>Count</th>
+                </theader>
+                <tbody>';
+                $start_time= strtotime($start);
+                while(strtotime($start) <= strtotime($end)){
+                    $count=0;
+                    foreach($Reservations as $reserve) {
+                        if ( (strtotime($reserve->pickup) >= $start_time ) && (strtotime($reserve->return) <= $start_time ) ){
+                        $count+=$reserve->car->price;
+                        $output .=
+                        '<tr>
+                            <td> '.date("Y-m-d ", $start_time).' </td>
+                            <td>  '.$count.'  </td>
+                        </tr>';
+    }
+}
+$start_time+=86400;
+}
+    $output .= '
+    </tbody>
+    </table>
+</div>';
+$output= $request->ends;
+}
+return response()->json($output);
+        }
+
+        return redirect()->route('daily');
+    }
+
 }

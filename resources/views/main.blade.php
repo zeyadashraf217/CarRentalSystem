@@ -31,7 +31,7 @@
     {{-- Nav --}}
     <div class=" container-fluid background-black d-flex ">
         <div class=" col-2">
-            <p class="h3 pt-2 px-3 mad2">CARZ</p>
+            <p class="h3 pt-2 px-3 mad2">NFLEON CARZ</p>
         </div>
         <div class=" col-2 pt-2 mad ">
             <a class=" decoration text-bar text-dark fw-bold text-center mad " href="#">Home</a>
